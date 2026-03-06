@@ -15,7 +15,7 @@ backend/*.sqlite3
 
 backend/.env
 backend/.env.*
-
+backend/env
 # =========================
 # Frontend (React / Node)
 # =========================
