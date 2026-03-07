@@ -156,18 +156,52 @@ def analyze_irrigation(soil, t, h, N, P, K, ph):
     if not fert: fert.append({"nutrient": "All", "action": "Balanced", "priority": "Low"})
     
     return {"soil_moisture_pct": round(pct,1), "irrigation": irg, "fertilization": fert}
+from sklearn.ensemble import RandomForestRegressor
+import numpy as np
 
-def analyze_forecast(hist):
-    if len(hist) < 2: return None
-    import numpy as np
-    def fcast(key):
+def analyze_forecast(hist, n_lags=5):
+    """
+    Predicts the next temperature, humidity, soil moisture, and pH
+    using RandomForestRegressor and last n_lags readings.
+    
+    hist: deque/list of past readings (dicts)
+    n_lags: number of previous readings to use as features
+    """
+    if len(hist) < n_lags:
+        return None  # Not enough data yet
+
+    keys = ["temperature", "humidity", "soil_moisture", "ph"]
+    forecast = {}
+
+    # Prepare training data
+    for key in keys:
+        X, y = [], []
         vals = [h[key] for h in hist]
-        c = np.polyfit(np.arange(len(vals)), vals, 1)
-        return float(round(c[0]*len(vals) + c[1], 2))
+        for i in range(len(vals) - n_lags):
+            X.append(vals[i:i+n_lags])
+            y.append(vals[i+n_lags])
+        if not X:  # Not enough data
+            forecast[key] = vals[-1]
+            continue
+
+        X = np.array(X)
+        y = np.array(y)
+
+        # Train RandomForest
+        model = RandomForestRegressor(n_estimators=50, random_state=42)
+        model.fit(X, y)
+
+        # Predict next value using last n_lags readings
+        last_vals = np.array(vals[-n_lags:]).reshape(1, -1)
+        forecast[key] = float(round(model.predict(last_vals)[0], 2))
+
     return {
-        "next_temperature": fcast("temperature"), "next_humidity": fcast("humidity"),
-        "next_soil_moisture": fcast("soil_moisture"), "next_ph": fcast("ph"),
-        "based_on_readings": len(hist), "note": "Linear trend"
+        "next_temperature": forecast["temperature"],
+        "next_humidity": forecast["humidity"],
+        "next_soil_moisture": forecast["soil_moisture"],
+        "next_ph": forecast["ph"],
+        "based_on_readings": len(hist),
+        "note": f"RandomForest forecast using last {n_lags} readings"
     }
 
 def analyze_anomaly(hist, curr):
