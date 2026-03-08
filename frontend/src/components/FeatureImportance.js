@@ -113,7 +113,21 @@ export default function FeatureImportance({ data, sensorData, recommendation }) 
         </h3>
         
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div style={{ padding: "12px 16px", borderRadius: 8, background: "#f0fdf4", border: "1px solid #bbf7d0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          
+
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)", marginBottom: 8, textTransform: "capitalize" }}>
+              Soil Recommendations for Paddy
+            </div>
+              <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                <li><strong>Nitrogen (N):</strong> Paddy requires high Nitrogen. Consider applying Urea in split doses.</li>
+                <li><strong>Phosphorus (P):</strong> Ensure adequate P for root development (basal application).</li>
+                <li><strong>Potassium (K):</strong> Maintain K for disease resistance and grain weight.</li>
+                <li><strong>pH Level:</strong> Ideal pH is 5.5 - 6.5. {sensorData?.ph > 6.5 ? "Your soil pH might be slightly high; monitor or consider adding organic matter." : sensorData?.ph < 5.5 ? "Your soil pH is low; consider liming." : "Your soil pH is in a good range."}</li>
+                <li><strong>Water Mgmt:</strong> Paddy is water-intensive. Maintain optimal soil moisture and standing water during critical stages.</li>
+              </ul>
+          </div>
+<div style={{ padding: "12px 16px", borderRadius: 8, background: "#f0fdf4", border: "1px solid #bbf7d0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
               <div style={{ fontSize: 13, color: "#166534", fontWeight: 600, marginBottom: 4 }}>Best Suited Crop</div>
               <div style={{ fontSize: 18, fontWeight: 800, color: "#15803d", textTransform: "capitalize" }}>
@@ -122,34 +136,10 @@ export default function FeatureImportance({ data, sensorData, recommendation }) 
             </div>
             <div style={{ fontSize: 32 }}>🌾</div>
           </div>
-
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)", marginBottom: 8, textTransform: "capitalize" }}>
-              Soil Recommendations for {recommendation || "Your Crop"}
-            </div>
-            {recommendation === "rice" || recommendation === "paddy" ? (
-              <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6 }}>
-                <li><strong>Nitrogen (N):</strong> Paddy requires high Nitrogen. Consider applying Urea in split doses.</li>
-                <li><strong>Phosphorus (P):</strong> Ensure adequate P for root development (basal application).</li>
-                <li><strong>Potassium (K):</strong> Maintain K for disease resistance and grain weight.</li>
-                <li><strong>pH Level:</strong> Ideal pH is 5.5 - 6.5. {sensorData?.ph > 6.5 ? "Your soil pH might be slightly high; monitor or consider adding organic matter." : sensorData?.ph < 5.5 ? "Your soil pH is low; consider liming." : "Your soil pH is in a good range."}</li>
-                <li><strong>Water Mgmt:</strong> Paddy is water-intensive. Maintain optimal soil moisture and standing water during critical stages.</li>
-              </ul>
-            ) : (
-              <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6 }}>
-                <li><strong>Nitrogen (N):</strong> Monitor Nitrogen levels. Adjust based on specific requirements of {recommendation || "the crop"}.</li>
-                <li><strong>Phosphorus (P):</strong> Important for root development. Maintain adequate levels.</li>
-                <li><strong>Potassium (K):</strong> Essential for disease resistance and overall plant health.</li>
-                <li><strong>pH Level:</strong> Monitor pH levels based on the specific tolerance of {recommendation || "the crop"}. Current pH is {sensorData?.ph || "unknown"}.</li>
-                <li><strong>Water Mgmt:</strong> Adjust irrigation according to to the specific needs of {recommendation || "the crop"}.</li>
-              </ul>
-            )}
-          </div>
-
           <div>
             <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)", marginBottom: 8 }}>Useful Resources for Farmers</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <a href="https://farmer.gov.in" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: "#1a56db", textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
+              <a href="https://agriwelfare.gov.in" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: "#1a56db", textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
                 <span>🔗</span> Farmers' Portal - Govt of India
               </a>
               <a href="https://rkvy.nic.in" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: "#1a56db", textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
