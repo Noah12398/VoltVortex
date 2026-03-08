@@ -229,7 +229,7 @@ export default function Dashboard({ data, history, loading, error, lastUpdated, 
             {activeTab === "irrigation" && <IrrigationFert data={data.irrigation_fertilization} />}
             {activeTab === "forecast"   && <ForecastChart history={history} forecast={data.forecast} />}
             {activeTab === "anomaly"    && <AnomalyAlert data={data.anomaly} />}
-            {activeTab === "features"   && <FeatureImportance data={data.feature_importance} />}
+            {activeTab === "features"   && <FeatureImportance data={data.feature_importance} sensorData={sensors} recommendation={data.crop_recommendation} />}
           </div>
         )}
 

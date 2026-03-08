@@ -48,6 +48,8 @@ latest_reading = None
 # 3. ML Models
 # ─────────────────────────────────────────
 MODEL_PATH = "crop_stress_model.pkl"
+RECOMMENDATION_MODEL_PATH = "crop_model.pkl"
+
 FEATURES = ["N", "P", "K", "temperature", "humidity", "ph"]
 MODEL_FEATURES = ["Nitrogen", "Phosphorus", "Potassium", "Temperature", "Humidity", "pH_Value"]
 
@@ -82,6 +84,24 @@ else:
     clf.fit(synthetic[FEATURES], synthetic["stress_label"])
     joblib.dump(clf, MODEL_PATH)
     print("✅ Synthetic Model Saved!")
+
+# Recommendation Model
+if os.path.exists(RECOMMENDATION_MODEL_PATH):
+    rec_clf = joblib.load(RECOMMENDATION_MODEL_PATH)
+    print("✅ Crop Recommendation Model Loaded!")
+else:
+    print("⚙️  Training Crop Recommendation Model...")
+    try:
+        data = pd.read_csv("Crop_recommendation.csv")
+        rx = data[['N','P','K','temperature','humidity','ph','rainfall']]
+        ry = data['label']
+        rec_clf = RandomForestClassifier(n_estimators=200, random_state=42)
+        rec_clf.fit(rx, ry)
+        joblib.dump(rec_clf, RECOMMENDATION_MODEL_PATH)
+        print("✅ Crop Recommendation Model Saved!")
+    except Exception as e:
+        print(f"⚠️ Could not train recommendation model: {e}")
+        rec_clf = None
 
 
 # ─────────────────────────────────────────
@@ -139,6 +159,18 @@ def analyze_nutrient_deficiency(N, P, K, ph):
         "deficiencies_detected": defs, "ph_warning": phw,
         "overall_status": "Deficient" if defs else "Balanced"
     }
+
+def analyze_crop_recommendation(N, P, K, temperature, humidity, ph):
+    if not rec_clf:
+        return "Not available (Model missing)"
+    
+    # Simulate rainfall based loosely on humidity
+    rainfall = max(20.0, min(300.0, humidity * 2.5))
+    
+    sample = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
+    prediction = rec_clf.predict(sample)[0]
+    return prediction
+
 
 def analyze_irrigation(soil, t, h, N, P, K, ph):
     pct = max(0, min(100, 100 - (soil / 4095) * 100))
@@ -273,6 +305,8 @@ def receive_data():
         fcast = analyze_forecast(history)
         anom = analyze_anomaly(history, fd)
         imps = get_feat_importances()
+        recommended_crop = analyze_crop_recommendation(N, P, K, t, h, ph)
+        
         
         timestamp = datetime.now().isoformat()
         
@@ -289,7 +323,8 @@ def receive_data():
             "irrigation_fertilization": irg,
             "forecast": fcast,
             "anomaly": anom,
-            "feature_importance": imps
+            "feature_importance": imps,
+            "crop_recommendation": recommended_crop
         }
         
         latest_reading = payload
