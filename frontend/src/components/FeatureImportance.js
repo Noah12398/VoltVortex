@@ -120,11 +120,11 @@ export default function FeatureImportance({ data, sensorData, recommendation }) 
               Soil Recommendations for Paddy
             </div>
               <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6 }}>
-                <li><strong>Nitrogen (N):</strong> Paddy requires high Nitrogen. Consider applying Urea in split doses.</li>
-                <li><strong>Phosphorus (P):</strong> Ensure adequate P for root development (basal application).</li>
-                <li><strong>Potassium (K):</strong> Maintain K for disease resistance and grain weight.</li>
-                <li><strong>pH Level:</strong> Ideal pH is 5.5 - 6.5. {sensorData?.ph > 6.5 ? "Your soil pH might be slightly high; monitor or consider adding organic matter." : sensorData?.ph < 5.5 ? "Your soil pH is low; consider liming." : "Your soil pH is in a good range."}</li>
-                <li><strong>Water Mgmt:</strong> Paddy is water-intensive. Maintain optimal soil moisture and standing water during critical stages.</li>
+                <li><strong>Nitrogen (N):</strong> Paddy requires high Nitrogen. {sensorData?.N < 80 ? `Current N is low (${sensorData?.N}). Apply Urea in split doses.` : sensorData?.N > 120 ? `Current N is high (${sensorData?.N}). Avoid excess nitrogen.` : `Current N (${sensorData?.N}) is optimal.`}</li>
+                <li><strong>Phosphorus (P):</strong> {sensorData?.P < 40 ? `Current P is low (${sensorData?.P}). Ensure adequate P for root development (basal application).` : sensorData?.P > 60 ? `Current P is high (${sensorData?.P}).` : `Current P (${sensorData?.P}) is optimal.`}</li>
+                <li><strong>Potassium (K):</strong> {sensorData?.K < 40 ? `Current K is low (${sensorData?.K}). Maintain K for disease resistance and grain weight.` : sensorData?.K > 60 ? `Current K is high (${sensorData?.K}).` : `Current K (${sensorData?.K}) is optimal.`}</li>
+                <li><strong>pH Level:</strong> Ideal pH is 5.5 - 6.5. {sensorData?.ph > 6.5 ? `Your soil pH (${sensorData?.ph}) might be slightly high; monitor or consider adding organic matter.` : sensorData?.ph < 5.5 ? `Your soil pH (${sensorData?.ph}) is low; consider liming.` : `Your soil pH (${sensorData?.ph}) is in a good range.`}</li>
+                <li><strong>Water Mgmt:</strong> Paddy is water-intensive. {sensorData?.soil_moisture > 2000 ? `Moisture level is low (ADC: ${sensorData?.soil_moisture}). Irrigate to maintain optimal soil moisture and standing water.` : `Moisture level is good (ADC: ${sensorData?.soil_moisture}). Maintain standing water during critical stages.`}</li>
               </ul>
           </div>
 <div style={{ padding: "12px 16px", borderRadius: 8, background: "#f0fdf4", border: "1px solid #bbf7d0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
